@@ -4,6 +4,7 @@ from accounts.models import Client , Ouvrier
 class Content_ticket(models.Model):
     date_send = models.DateField(auto_now=True , null = True)
     desciption = models.CharField(max_length = 250 , null = True)
+    
 class Ticket (models.Model):
     from_client = models.ForeignKey (Client , null = True , on_delete = models.CASCADE)
     to_ouvrier = models.ForeignKey(Ouvrier , null = True , on_delete = models.CASCADE)

@@ -3,20 +3,20 @@
 from django.http.response import HttpResponse, JsonResponse
 from django.views import generic
 from rest_framework import generics, permissions, response
-
+from rest_framework.response import Response
 from Ticket.api.serializers import TicketContentSerializer, TicketSerializer
 from Ticket.models import Ticket
 from accounts.api.serializers import UserSerializer
 from accounts.models import Client, Ouvrier
 
 
-class SendTicketAPIView(generics.GenericAPIView):
+class SendTicketAPIView(generics.RetrieveAPIView):
     permission_classes = [
         permissions.IsAuthenticated,
     ]
     serializer_class = TicketContentSerializer
     queryset = '' 
-    def put(self, request, pk):
+    def post(self, request, pk):
         to_employees = Ouvrier.objects.get( id = pk)
         client = Client.objects.get(user = self.request.user)
         serializer = self.get_serializer(data=request.data)
@@ -25,7 +25,8 @@ class SendTicketAPIView(generics.GenericAPIView):
         ticketContent.save()
         ticket = Ticket(from_client = client , to_ouvrier = to_employees , content = ticketContent)
         ticket.save()
-        return response(UserSerializer(self.request.user).data)
+        print("done")
+        return Response(UserSerializer(self.request.user).data)
 
 class ListeTicketAPIView(generics.GenericAPIView):
     permission_classes = [

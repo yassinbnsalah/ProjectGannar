@@ -12,7 +12,7 @@ class Client (models.Model):
     def __str__(self):
         return self.nom
 
-class Ouvrier (models.Model):
+class Ouvrier (models.Model): 
     client = models.ForeignKey(Client , null = True , on_delete=models.CASCADE)
     job = models.CharField(max_length=50 , null = True)
     desponibility = models.CharField(max_length=50 , null = True)
@@ -22,7 +22,7 @@ class Ouvrier (models.Model):
     
 
 class Demmande (models.Model):
-    #client = models.ForeignKey(Client , null = True , on_delete= models.CASCADE)
+    client = models.ForeignKey(Client , related_name="demande" ,null = True , on_delete= models.CASCADE)
     job = models.CharField(max_length= 50 , null = True )
     disponible = models.CharField(max_length=50 , null = True) 
     description = models.CharField(max_length= 250 , null = True )

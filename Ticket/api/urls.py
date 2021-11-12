@@ -6,3 +6,4 @@ urlpatterns = [
     path('send/<int:pk>/' , SendTicketAPIView.as_view()),
     path('liste', ListeTicketAPIView.as_view())
 ]
+ 

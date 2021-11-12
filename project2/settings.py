@@ -40,7 +40,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'knox', 
     'accounts',
-    'Ticket'
+    'Ticket',
+    'Post'
 ]
 REST_FRAMEWORK = {
     # 'DEFAULT_PERMISSION_CLASSES': [  # remove
