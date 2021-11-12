@@ -42,7 +42,9 @@ INSTALLED_APPS = [
     'knox', 
     'accounts',
     'Ticket',
-    'Post'
+    'Post',
+    'gunicorn',
+    'django-heroku'
 ]
 REST_FRAMEWORK = {
     # 'DEFAULT_PERMISSION_CLASSES': [  # remove
