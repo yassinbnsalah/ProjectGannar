@@ -256,6 +256,7 @@ class LogoutAPIView(generics.GenericAPIView):
     serializer_class = UserSerializer
     queryset = ''
     def post(self , request , *args, **kwargs):
+        print("")
         logout(self.request.user)
         print("done")
         return Response({
