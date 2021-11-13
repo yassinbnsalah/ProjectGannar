@@ -49,7 +49,8 @@ class UpdateOuvrierInfoAPIView(generics.GenericAPIView):
     queryset = ''
     def put(self , request ):
         data = JSONParser().parse(request)
-        ouvrier = Ouvrier.objects.get(user = self.request.user)
+        client = Client.objects.get(user = self.request.user)
+        ouvrier = Ouvrier.objects.get(client = client)
         serializer = OuvrierInfoSerializer(ouvrier ,data = data)
         if serializer.is_valid():
             serializer.save()
@@ -131,10 +132,10 @@ class ListeClientAPIView(generics.GenericAPIView):
     serializer_class = ClientSerializer
     queryset = '' 
     def get(self, request, *args, **kwargs):
-        #snippets = Client.objects.all()
-        snippets = Client.objects.get(user = self.request.user) 
-        print(snippets.nom)
-        serializer = ClientSerializer(snippets)
+        snippets = Client.objects.all()
+        #snippets = Client.objects.get(user = self.request.user) 
+        #print(snippets.nom)
+        serializer = ClientSerializer(snippets , many = True)
         return JsonResponse(serializer.data, safe=False)
 
 class ListeOuvrierAPIView(generics.GenericAPIView):

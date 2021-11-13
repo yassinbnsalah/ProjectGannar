@@ -12,13 +12,13 @@ User._meta.get_field('email')._unique = True
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('id', 'username', 'email')
+        fields = ('id', 'username', 'email','groups')
 
 class ClientSerializer(serializers.ModelSerializer):
-    
+    user = UserSerializer(many = False)
     class Meta :
         model = Client
-        fields = ('id' , 'nom' , 'prenom' ,'email' ,'is_employees' ,'numero_tel','adress')
+        fields = ('id' , 'nom' , 'prenom' ,'email' ,'is_employees' ,'numero_tel','adress' ,'user')
 
 class DemandeSerializer(serializers.ModelSerializer):
     client = ClientSerializer(many=False)
