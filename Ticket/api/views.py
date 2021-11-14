@@ -40,3 +40,5 @@ class ListeTicketAPIView(generics.GenericAPIView):
         ticket = Ticket.objects.filter(to_ouvrier = ouvrier)
         serializer = TicketSerializer(ticket, many=True)
         return JsonResponse(serializer.data, safe=False)
+
+

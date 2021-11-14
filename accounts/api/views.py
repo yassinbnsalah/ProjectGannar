@@ -9,7 +9,7 @@ from knox.models import AuthToken
 from rest_framework.parsers import JSONParser
 #from knox import AuthToken
 
-from .serializers import ClientSerializer, DemandeSendSerializer, DemandeSerializer, LoginAdminSerializer, OuvrierInfoSerializer, OuvrierSerializer, RequestRoleSerializer, UserSerializer, RegisterSerializer, LoginSerializer
+from .serializers import ClientInfoSerializer, ClientSerializer, DemandeSendSerializer, DemandeSerializer, LoginAdminSerializer, OuvrierInfoSerializer, OuvrierSerializer, RequestRoleSerializer, UserSerializer, RegisterSerializer, LoginSerializer
 
 
 class UserAPIView(generics.GenericAPIView):
@@ -29,17 +29,17 @@ class UpdateClientInfoAPIView(generics.GenericAPIView):
     permission_classes = [
         permissions.IsAuthenticated,
     ]
-    serializer_class = ClientSerializer 
+    serializer_class = ClientInfoSerializer 
     queryset = ''
     def put(self , request ):
         data = JSONParser().parse(request)
         client = Client.objects.get(user = self.request.user)
-        serializer = ClientSerializer(client ,data = data)
+        serializer = ClientInfoSerializer(client , data = data)
         if serializer.is_valid():
             serializer.save()
             print('done')
             return JsonResponse(serializer.data)
-        return Response( ClientSerializer(client).data)
+        return Response( ClientInfoSerializer(client).data)
 
 class UpdateOuvrierInfoAPIView(generics.GenericAPIView):
     permission_classes = [
@@ -201,15 +201,17 @@ class RechercherPerCatAPIView(generics.GenericAPIView):
     permission_classes = [
         permissions.IsAuthenticated,
     ]
-    serializer_class = OuvrierSerializer
+    serializer_class = OuvrierInfoSerializer
     queryset = ''
     def get(self , request , job , adress):
         employees = Client.objects.filter(adress = adress)
+        
         liste =list()
         for employe in employees:
-            ouv = Ouvrier.objects.get(client = employe , job = job)
+            ouv = Ouvrier.objects.get(job = job)
             liste.append(ouv)
-        serializer = OuvrierSerializer(liste , many = True)
+        print(liste)
+        serializer = OuvrierInfoSerializer(liste , many = True)
         return JsonResponse(serializer.data , safe = False)
 
 class RegisterAPIView(generics.GenericAPIView):

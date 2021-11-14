@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'accounts',
     'Ticket',
     'Post',
+    
 ]
 REST_FRAMEWORK = {
     # 'DEFAULT_PERMISSION_CLASSES': [  # remove

@@ -20,6 +20,13 @@ class ClientSerializer(serializers.ModelSerializer):
         model = Client
         fields = ('id' , 'nom' , 'prenom' ,'email' ,'is_employees' ,'numero_tel','adress' ,'user')
 
+
+class ClientInfoSerializer(serializers.ModelSerializer):
+    
+    class Meta :
+        model = Client
+        fields = ('id' , 'nom' , 'prenom' ,'email' ,'is_employees' ,'numero_tel','adress')
+
 class DemandeSerializer(serializers.ModelSerializer):
     client = ClientSerializer(many=False)
     class Meta : 
