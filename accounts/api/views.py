@@ -207,8 +207,12 @@ class RechercherWithNameAPIView(generics.GenericAPIView):
     serializer_class = OuvrierSerializer
     queryset = ''
     def get(self , request , name):
+        if name == "" :
+            employees = Client.objects.filter(is_employees = True)
+        else :
+        
+            employees = Client.objects.filter(nom__icontains = name , is_employees = True)
         liste = list()
-        employees = Client.objects.filter(nom__icontains = name , is_employees = True)
         for employ in employees :
             print(employ.nom)
             ouv = Ouvrier.objects.get(client = employ)
