@@ -2,11 +2,11 @@
 
 from django.http.response import HttpResponse, JsonResponse
 from django.views import generic
-from rest_framework import generics, permissions, response
+from rest_framework import generics, permissions, response, serializers
 from rest_framework.response import Response
 from Ticket.api.serializers import TicketContentSerializer, TicketSerializer
-from Ticket.models import Ticket
-from accounts.api.serializers import UserSerializer
+from Ticket.models import Content_ticket, Ticket
+from accounts.api.serializers import ClientSerializer, UserSerializer
 from accounts.models import Client, Ouvrier
 
 
@@ -41,4 +41,29 @@ class ListeTicketAPIView(generics.GenericAPIView):
         serializer = TicketSerializer(ticket, many=True)
         return JsonResponse(serializer.data, safe=False)
 
+class AcceptTicketAPIView(generics.GenericAPIView):
+    permission_classes = [
+        permissions.IsAuthenticated,
+    ]
+    serializer_class = TicketSerializer
+    queryset = '' 
+    def put (self , request , pk):
+        ticket = Ticket.objects.get ( id = pk) 
+        ticket.accepted = True 
+        ticket.save()
+        serializer = TicketSerializer(ticket , many = False)
+        return JsonResponse(serializer.data , safe = False)
 
+class RefuseTicketAPIView(generics.GenericAPIView):
+    permission_classes = [
+        permissions.IsAuthenticated,
+    ]
+    serializer_class = TicketSerializer
+    queryset = '' 
+    def put ( self , request , pk):
+        ticket = Ticket.objects.get(id = pk)
+        ticket.content.delete()
+        ticket.delete() 
+        client = Client.objects.get(user = self.request.user)
+        serializer = ClientSerializer(client , many = False )
+        return JsonResponse(serializer.data , safe = False)

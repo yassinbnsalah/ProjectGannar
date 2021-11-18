@@ -8,18 +8,25 @@ class Client (models.Model):
     is_employees = models.BooleanField(default= False , null = True)
     numero_tel = models.CharField(max_length = 8 ,null = True , default ="00000000")
     adress = models.CharField(max_length=250 , null = True , default= "unknow")
+    image = models.ImageField(upload_to='images' , null = True , default = "images/avatar-11.jpg")
     user = models.ForeignKey(User , null = True , on_delete= models.CASCADE )
     def __str__(self):
         return self.nom
+
+class Categorie (models.Model):
+    name = models.CharField(max_length=50 , null = True)
+    nb_employees = models.IntegerField(null = True) 
+    def __str__(self):
+        return self.name
 
 class Ouvrier (models.Model): 
     client = models.ForeignKey(Client , null = True , on_delete=models.CASCADE)
     job = models.CharField(max_length=50 , null = True)
     desponibility = models.CharField(max_length=50 , null = True)
     description = models.CharField(max_length = 250 , null = True)
+    categorie = models.ForeignKey(Categorie , null = True , on_delete= models.CASCADE)
     def __str__(self):
         return self.client.nom
-    
 
 class Demmande (models.Model):
     client = models.ForeignKey(Client , related_name="demande" ,null = True , on_delete= models.CASCADE)

@@ -17,7 +17,7 @@ class AddPostAPIView(generics.RetrieveAPIView):
     def post (self , request ):
         serializer = self.get_serializer(data = request.data)
         serializer.is_valid(raise_exception=True)
-
+        
         post = serializer.save() 
         client = Client.objects.get( user = self.request.user)
         post.client = client 

@@ -16,3 +16,7 @@ admin.site.register(Request_Role)
 from .models import Ouvrier 
 # Register your models here.
 admin.site.register(Ouvrier)
+
+from .models import Categorie 
+# Register your models here.
+admin.site.register(Categorie)

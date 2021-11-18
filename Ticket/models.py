@@ -9,6 +9,7 @@ class Ticket (models.Model):
     from_client = models.ForeignKey (Client , null = True , on_delete = models.CASCADE)
     to_ouvrier = models.ForeignKey(Ouvrier , null = True , on_delete = models.CASCADE)
     content = models.ForeignKey(Content_ticket , null = True , on_delete=models.CASCADE)
+    accepted = models.BooleanField(null = True , default= False)
     def __str__(self):
         return "from "+self.from_client.nom+" to "+self.to_ouvrier.client.nom 
 

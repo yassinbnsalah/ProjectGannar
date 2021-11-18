@@ -2,14 +2,15 @@ from django.contrib.auth import logout
 from django.contrib.auth.models import Group
 from django.http.response import HttpResponse, JsonResponse
 from rest_framework import generics, permissions, serializers
+from rest_framework.exceptions import ParseError
 from rest_framework.response import Response
 from accounts.decorators import allowed_users
-from accounts.models import Client, Demmande, Ouvrier
+from accounts.models import Categorie, Client, Demmande, Ouvrier
 from knox.models import AuthToken
 from rest_framework.parsers import JSONParser
 #from knox import AuthToken
 
-from .serializers import ClientInfoSerializer, ClientSerializer, DemandeSendSerializer, DemandeSerializer, LoginAdminSerializer, OuvrierInfoSerializer, OuvrierSerializer, RequestRoleSerializer, UserSerializer, RegisterSerializer, LoginSerializer
+from .serializers import CategorieSerializer, ClientInfoSerializer, ClientInfoSerializer2, ClientSerializer, DemandeSendSerializer, DemandeSerializer, LoginAdminSerializer, OuvrierInfoSerializer, OuvrierSerializer, RequestRoleSerializer, UserSerializer, RegisterSerializer, LoginSerializer
 
 
 class UserAPIView(generics.GenericAPIView):
@@ -19,7 +20,6 @@ class UserAPIView(generics.GenericAPIView):
     serializer_class = ClientSerializer
     queryset = '' 
     def get(self, request, *args, **kwargs):
-        #snippets = Client.objects.all()
         snippets = Client.objects.get(user = self.request.user) 
         print(snippets.nom)
         serializer = ClientSerializer(snippets)
@@ -29,18 +29,33 @@ class UpdateClientInfoAPIView(generics.GenericAPIView):
     permission_classes = [
         permissions.IsAuthenticated,
     ]
-    serializer_class = ClientInfoSerializer 
+    serializer_class = ClientInfoSerializer2 
     queryset = ''
     def put(self , request ):
-        data = JSONParser().parse(request)
         client = Client.objects.get(user = self.request.user)
-        serializer = ClientInfoSerializer(client , data = data)
+        data = JSONParser().parse(request)
+        serializer = ClientInfoSerializer2(client , data = data)
         if serializer.is_valid():
             serializer.save()
-            print('done')
+            self.request.user.username = client.nom
+            self.request.user.save()
+            
             return JsonResponse(serializer.data)
         return Response( ClientInfoSerializer(client).data)
 
+class UpdateClientImageAPIView(generics.GenericAPIView):
+    permission_classes = [
+        permissions.IsAuthenticated,
+    ]
+    serializer_class = ClientInfoSerializer2 
+    queryset = ''
+    def put(self , request ):
+        print('hello')
+        print(request.FILES['images'])
+        client = Client.objects.get(user = self.request.user)
+        client.image = request.FILES['images']
+        client.save()
+        return Response( ClientInfoSerializer(client).data)
 class UpdateOuvrierInfoAPIView(generics.GenericAPIView):
     permission_classes = [
         permissions.IsAuthenticated,
@@ -65,7 +80,6 @@ class DemandeAPIView(generics.RetrieveAPIView):
     ]
     serializer_class = DemandeSendSerializer 
     queryset = ''
-    #queryset = Demmande.objects.all()
     def post(self, request, *args, **kwargs):
         if self.request.user.groups.filter(name='ouvrier').exists():
             return HttpResponse(status=400)
@@ -85,28 +99,33 @@ class ClientRoleAPIView(generics.GenericAPIView):
         permissions.IsAuthenticated,
     ]
     serializer_class = ClientSerializer
-    queryset = '' 
+    queryset = ''
     def put(self,request, pk):
         try:
             demande = Demmande.objects.get(pk=pk)
         except Demmande.DoesNotExist:
             return HttpResponse(status=404)
         if self.request.user.groups.filter(name='admin').exists():
-            print("is admin")
+            print(demande.job)
             client = Client.objects.get(id = demande.client.id)
             group = Group.objects.get(name='ouvrier')
             client.user.groups.add(group)
             client.is_employees = True
             client.save()
-            ouvrier = Ouvrier(client = client , job = demande.job , desponibility = demande.disponible , description = demande.description)
+            nb = Categorie.objects.filter(name = demande.job).count()
+            print(nb)
+            if nb == 0:
+                categorie = Categorie.objects.get(id = 2)
+            else:
+                categorie = Categorie.objects.get( name__icontains = demande.job)
+            print( categorie.name )
+            ouvrier = Ouvrier(client = client , job = demande.job , desponibility = demande.disponible , description = demande.description , categorie = categorie)
+            print(ouvrier.categorie.name)
             ouvrier.save()
             demande.delete() 
-            return Response( UserSerializer(self.request.user).data)
-        else :
+            return Response(UserSerializer(self.request.user).data)
+        else:
             return Response("is not admin")
-        
-        #Role.delete()
-        
 
 class ClientRefuseRoleAPIView(generics.GenericAPIView):
     permission_classes = [
@@ -149,6 +168,27 @@ class ListeOuvrierAPIView(generics.GenericAPIView):
         serializer = OuvrierSerializer(liste , many=True)
         return JsonResponse(serializer.data , safe = False)
 
+class ListeCategorie(generics.GenericAPIView):
+    permission_classes = [
+        permissions.IsAuthenticated,
+    ]
+    serializer_class = CategorieSerializer
+    queryset = ''
+    def get(self , request , *args, **kwargs):
+        categories = Categorie.objects.all()
+        serializer = CategorieSerializer(categories , many = True)
+        return JsonResponse(serializer.data , safe = False)
+
+class EmployesIDAPIView(generics.GenericAPIView):
+    permission_classes = [
+        permissions.IsAuthenticated,
+    ]
+    serializer_class = OuvrierSerializer 
+    queryset = ''
+    def get(self , request , pk):
+        employes = Ouvrier.objects.get(id = pk)
+        serializer = OuvrierSerializer(employes , many = False)
+        return JsonResponse(serializer.data , safe = False)
 class ListeRequestAPIView(generics.GenericAPIView):
     permission_classes = [
         permissions.IsAuthenticated,
@@ -157,7 +197,6 @@ class ListeRequestAPIView(generics.GenericAPIView):
     queryset = '' 
     def get(self , request , *args, **kwargs):
         liste = Demmande.objects.all()
-
         serializer = DemandeSerializer(liste , many=True)
         return JsonResponse(serializer.data , safe = False)
 
@@ -222,7 +261,7 @@ class RegisterAPIView(generics.GenericAPIView):
         user = serializer.save()
         group = Group.objects.get(name='client')
         user.groups.add(group)
-        client = Client(nom = user.username , prenom = "" , email = user.email , user = user)
+        client = Client(nom = user.username , prenom = "" , email = user.email , user = user )
         client.save() 
         return Response({
             "user": UserSerializer(user, context=self.get_serializer_context()).data,
@@ -265,6 +304,5 @@ class LogoutAPIView(generics.GenericAPIView):
         return Response({
             "done" : "yes"
         })
-
 
 

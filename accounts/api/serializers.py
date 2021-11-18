@@ -1,10 +1,11 @@
 
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
+from django.db.models import fields
 
 from rest_framework import serializers
 
-from accounts.models import Client, Demmande, Ouvrier, Request_Role
+from accounts.models import Categorie, Client, Demmande, Ouvrier, Request_Role
 
 User._meta.get_field('email')._unique = True
 
@@ -18,21 +19,31 @@ class ClientSerializer(serializers.ModelSerializer):
     user = UserSerializer(many = False)
     class Meta :
         model = Client
-        fields = ('id' , 'nom' , 'prenom' ,'email' ,'is_employees' ,'numero_tel','adress' ,'user')
+        fields = ('id' , 'nom' , 'prenom' ,'email' ,'is_employees' ,'numero_tel','adress' , 'image' ,'user')
 
 
 class ClientInfoSerializer(serializers.ModelSerializer):
     
     class Meta :
         model = Client
-        fields = ('id' , 'nom' , 'prenom' ,'email' ,'is_employees' ,'numero_tel','adress')
+        fields = ('id' , 'nom' , 'prenom' ,'email' ,'is_employees' ,'numero_tel','adress','image')
 
+class ClientInfoSerializer2(serializers.ModelSerializer):
+    
+    class Meta :
+        model = Client
+        fields = ('id' , 'nom' , 'prenom' ,'email' ,'is_employees' ,'numero_tel','adress')
 class DemandeSerializer(serializers.ModelSerializer):
     client = ClientSerializer(many=False)
     class Meta : 
         model = Demmande
         fields = ('id','job' , 'disponible' , 'description' ,'client')
 
+class CategorieSerializer(serializers.ModelSerializer):
+    class Meta : 
+        model = Categorie 
+        fields = '__all__'
+        
 class DemandeSendSerializer(serializers.ModelSerializer):
     class Meta : 
         model = Demmande
@@ -65,7 +76,8 @@ class RegisterSerializer(serializers.ModelSerializer):
         user = User.objects.create_user(
             validated_data['username'],
             validated_data['email'],
-            validated_data['password']
+            validated_data['password'],
+
         )
         return user
 
