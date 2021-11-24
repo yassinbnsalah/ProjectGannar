@@ -5,7 +5,7 @@ from rest_framework import generics, permissions, serializers
 from rest_framework.response import Response
 from Post.models import Post
 from accounts.api.serializers import ClientSerializer, UserSerializer
-from accounts.models import Client
+from accounts.models import Client, Ouvrier
 from .serializers import PostSerializer,PostListeSerializer
 
 class AddPostAPIView(generics.RetrieveAPIView):
@@ -36,3 +36,24 @@ class ListePostAPIView(generics.GenericAPIView):
         post = Post.objects.filter(client = client)
         serializer = PostListeSerializer(post , many = True)
         return JsonResponse(serializer.data , safe=False)
+
+class ListePostForEmployeesAPIView(generics.GenericAPIView):
+    permission_classes = [
+        permissions.IsAuthenticated,
+    ]
+    serializer_class = PostListeSerializer
+    queryset = ''
+    def get(self , request) :
+        client = Client.objects.get(user = self.request.user)
+        employees = Ouvrier.objects.get(client = client) 
+        client_adress = Client.objects.filter(adress = client.adress) 
+        liste = list() 
+        for cl in client_adress:
+            posts = Post.objects.filter(client = cl) 
+            for post in posts:
+                liste.append(post)
+
+        print(liste)
+        serializer = PostListeSerializer(liste , many = True) 
+        return JsonResponse(serializer.data , safe = False)
+

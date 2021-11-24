@@ -17,6 +17,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 class ClientSerializer(serializers.ModelSerializer):
     user = UserSerializer(many = False)
+    
     class Meta :
         model = Client
         fields = ('id' , 'nom' , 'prenom' ,'email' ,'is_employees' ,'numero_tel','adress' , 'image' ,'user')

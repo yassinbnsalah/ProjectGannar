@@ -116,8 +116,11 @@ class ClientRoleAPIView(generics.GenericAPIView):
             print(nb)
             if nb == 0:
                 categorie = Categorie.objects.get(id = 2)
+                
             else:
                 categorie = Categorie.objects.get( name__icontains = demande.job)
+            categorie.nb_employees = categorie.nb_employees + 1
+            categorie.save()
             print( categorie.name )
             ouvrier = Ouvrier(client = client , job = demande.job , desponibility = demande.disponible , description = demande.description , categorie = categorie)
             print(ouvrier.categorie.name)
@@ -279,10 +282,19 @@ class LoginAPIView(generics.GenericAPIView):
         serializer.is_valid(raise_exception=True)
         client = serializer.validated_data
         user = client.user
-        return Response({
-            "user": ClientSerializer(client, context=self.get_serializer_context()).data,
-            "token": AuthToken.objects.create(user)[1]
-        })
+        if client.is_employees == True: 
+            employees = Ouvrier.objects.get(client = client)
+            return Response({
+                "employees" : OuvrierInfoSerializer(employees , context=self.get_serializer_context()).data,
+                "user": ClientSerializer(client, context=self.get_serializer_context()).data,
+                "token": AuthToken.objects.create(user)[1]
+            })
+        else:
+            return Response({
+                "user": ClientSerializer(client, context=self.get_serializer_context()).data,
+                "token": AuthToken.objects.create(user)[1]
+            })
+        
 
 class LoginAdminAPIView(generics.GenericAPIView):
     serializer_class = LoginAdminSerializer
