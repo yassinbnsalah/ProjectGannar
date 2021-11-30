@@ -5,7 +5,7 @@ from django.db.models import fields
 
 from rest_framework import serializers
 
-from accounts.models import Categorie, Client, Demmande, Ouvrier, Request_Role
+from accounts.models import Categorie, Client, ContactUS, Demmande, Ouvrier, Request_Role
 
 User._meta.get_field('email')._unique = True
 
@@ -20,20 +20,20 @@ class ClientSerializer(serializers.ModelSerializer):
     
     class Meta :
         model = Client
-        fields = ('id' , 'nom' , 'prenom' ,'email' ,'is_employees' ,'numero_tel','adress' , 'image' ,'user')
+        fields = ('id' , 'nom' , 'prenom' ,'email' ,'is_employees' ,'numero_tel','adress' , 'image' ,'user','is_requested')
 
 
 class ClientInfoSerializer(serializers.ModelSerializer):
     
     class Meta :
         model = Client
-        fields = ('id' , 'nom' , 'prenom' ,'email' ,'is_employees' ,'numero_tel','adress','image')
+        fields = ('id' , 'nom' , 'prenom' ,'email' ,'is_employees' ,'numero_tel','adress','image','is_requested')
 
 class ClientInfoSerializer2(serializers.ModelSerializer):
     
     class Meta :
         model = Client
-        fields = ('id' , 'nom' , 'prenom' ,'email' ,'is_employees' ,'numero_tel','adress')
+        fields = ('id' , 'nom' , 'prenom' ,'email' ,'is_employees' ,'numero_tel','adress','is_requested')
 class DemandeSerializer(serializers.ModelSerializer):
     client = ClientSerializer(many=False)
     class Meta : 
@@ -53,19 +53,22 @@ class OuvrierSerializer(serializers.ModelSerializer):
     client = ClientSerializer(many = False)
     class Meta : 
         model = Ouvrier
-        fields = ('id' ,'job' ,'desponibility' , 'description','client')
+        fields = ('id' ,'job' ,'desponibility' , 'description','client','nb_ticket')
+
+class ContactSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ContactUS
+        fields = '__all__'
 
 class OuvrierInfoSerializer(serializers.ModelSerializer):
-    
     class Meta : 
         model = Ouvrier
-        fields = ('id' ,'job' ,'desponibility' , 'description')
+        fields = ('id' ,'job' ,'desponibility' , 'description','nb_ticket')
 
 class RequestRoleSerializer(serializers.ModelSerializer):
     class Meta :
         model = Request_Role
         fields = ('id' , 'client' , 'demande')
-
 
 class RegisterSerializer(serializers.ModelSerializer):
     class Meta:

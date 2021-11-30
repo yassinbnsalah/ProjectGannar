@@ -10,7 +10,7 @@ from knox.models import AuthToken
 from rest_framework.parsers import JSONParser
 #from knox import AuthToken
 
-from .serializers import CategorieSerializer, ClientInfoSerializer, ClientInfoSerializer2, ClientSerializer, DemandeSendSerializer, DemandeSerializer, LoginAdminSerializer, OuvrierInfoSerializer, OuvrierSerializer, RequestRoleSerializer, UserSerializer, RegisterSerializer, LoginSerializer
+from .serializers import CategorieSerializer, ClientInfoSerializer, ClientInfoSerializer2, ClientSerializer, ContactSerializer, DemandeSendSerializer, DemandeSerializer, LoginAdminSerializer, OuvrierInfoSerializer, OuvrierSerializer, RequestRoleSerializer, UserSerializer, RegisterSerializer, LoginSerializer
 
 
 class UserAPIView(generics.GenericAPIView):
@@ -90,8 +90,12 @@ class DemandeAPIView(generics.RetrieveAPIView):
             client = Client.objects.get(user = self.request.user)
             demande.client = client
             demande.save() 
+            client.is_requested = True
+            client.save()
+            demandes = Demmande.objects.filter(client = client) 
+            serializer = DemandeSerializer(demandes , many=True)
             print(self.request.user)
-            return Response( UserSerializer(self.request.user).data)
+            return JsonResponse(serializer.data , safe = False)
 
 
 class ClientRoleAPIView(generics.GenericAPIView):
@@ -130,6 +134,17 @@ class ClientRoleAPIView(generics.GenericAPIView):
         else:
             return Response("is not admin")
 
+
+class ContactUsAPIView(generics.GenericAPIView):
+    serializer_class = ContactSerializer
+    queryset = '' 
+    def post(self,request):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return JsonResponse("done", safe = False)
+
+
 class ClientRefuseRoleAPIView(generics.GenericAPIView):
     permission_classes = [
         permissions.IsAuthenticated,
@@ -147,6 +162,7 @@ class ClientRefuseRoleAPIView(generics.GenericAPIView):
         client = Client.objects.get(user = self.request.user) 
         return Response( ClientSerializer(client).data)
 
+
 class ListeClientAPIView(generics.GenericAPIView):
     permission_classes = [
         permissions.IsAuthenticated,
@@ -159,6 +175,7 @@ class ListeClientAPIView(generics.GenericAPIView):
         #print(snippets.nom)
         serializer = ClientSerializer(snippets , many = True)
         return JsonResponse(serializer.data, safe=False)
+
 
 class ListeOuvrierAPIView(generics.GenericAPIView):
     permission_classes = [

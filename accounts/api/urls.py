@@ -2,7 +2,7 @@
 from django.urls import path, include
 from knox import views as knox_views
 
-from .views import ClientRefuseRoleAPIView, ClientRoleAPIView, DemandeAPIView, EmployesIDAPIView, ListeCategorie, ListeClientAPIView, ListeOuvrierAPIView, ListeRequestAPIView, LoginAdminAPIView, LogoutAPIView, RechercherPerCatAPIView, RechercherWithNameAPIView, RecommendedAPIView, UpdateClientImageAPIView, UpdateClientInfoAPIView, UpdateOuvrierInfoAPIView, UserAPIView, RegisterAPIView, LoginAPIView
+from .views import ClientRefuseRoleAPIView, ClientRoleAPIView, ContactUsAPIView, DemandeAPIView, EmployesIDAPIView, ListeCategorie, ListeClientAPIView, ListeOuvrierAPIView, ListeRequestAPIView, LoginAdminAPIView, LogoutAPIView, RechercherPerCatAPIView, RechercherWithNameAPIView, RecommendedAPIView, UpdateClientImageAPIView, UpdateClientInfoAPIView, UpdateOuvrierInfoAPIView, UserAPIView, RegisterAPIView, LoginAPIView
 
 urlpatterns = [
     path('', include('knox.urls')),
@@ -25,5 +25,6 @@ urlpatterns = [
     path('recherchePerName/<str:name>/', RechercherWithNameAPIView.as_view()),
     path('recherchePerCat/<str:job>/<str:adress>' , RechercherPerCatAPIView.as_view()),
     path('sugUser/' , RecommendedAPIView.as_view()),
+    path('contactUS/' , ContactUsAPIView.as_view())
   
 ]

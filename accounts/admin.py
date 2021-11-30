@@ -20,3 +20,8 @@ admin.site.register(Ouvrier)
 from .models import Categorie 
 # Register your models here.
 admin.site.register(Categorie)
+
+
+from .models import ContactUS 
+# Register your models here.
+admin.site.register(ContactUS)

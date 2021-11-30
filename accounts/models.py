@@ -8,6 +8,7 @@ class Client (models.Model):
     is_employees = models.BooleanField(default= False , null = True)
     numero_tel = models.CharField(max_length = 8 ,null = True , default ="00000000")
     adress = models.CharField(max_length=250 , null = True , default= "unknow")
+    is_requested = models.BooleanField(null = True , default = False)
     image = models.ImageField(upload_to='images' , null = True , default = "images/avatar-11.jpg")
     user = models.ForeignKey(User , null = True , on_delete= models.CASCADE )
     def __str__(self):
@@ -24,6 +25,7 @@ class Ouvrier (models.Model):
     job = models.CharField(max_length=50 , null = True)
     desponibility = models.CharField(max_length=50 , null = True)
     description = models.CharField(max_length = 250 , null = True)
+    nb_ticket = models.IntegerField(null = True )
     categorie = models.ForeignKey(Categorie , null = True , on_delete= models.CASCADE)
     def __str__(self):
         return self.client.nom
@@ -39,3 +41,11 @@ class Demmande (models.Model):
 class Request_Role (models.Model):
     client = models.ForeignKey(Client , null = True , on_delete= models.CASCADE)
     demande = models.ForeignKey(Demmande , null = True , on_delete = models.CASCADE)
+
+class ContactUS (models.Model):
+    nom = models.CharField(max_length=50 , null = True)
+    email = models.CharField(max_length=250 , null = True)
+    message = models.CharField(max_length=500 , null = True) 
+    def __str__(self):
+        return self.nom
+    

@@ -14,6 +14,7 @@ class TicketContentSerializer(serializers.ModelSerializer):
 class TicketSerializer(serializers.ModelSerializer):
     from_client = ClientSerializer(many = False)
     to_ouvrier = OuvrierSerializer(many = False) 
+    content = TicketContentSerializer(many = False)
     class Meta:
         model = Ticket
         fields = ('id' ,'from_client' ,'to_ouvrier' , 'content' ,'accepted')
