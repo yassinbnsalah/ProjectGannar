@@ -5,7 +5,7 @@ from rest_framework import generics, permissions, serializers
 from rest_framework.exceptions import ParseError
 from rest_framework.response import Response
 from accounts.decorators import allowed_users
-from accounts.models import Categorie, Client, Demmande, Ouvrier
+from accounts.models import Categorie, Client, ContactUS, Demmande, Ouvrier
 from knox.models import AuthToken
 from rest_framework.parsers import JSONParser
 #from knox import AuthToken
@@ -144,6 +144,14 @@ class ContactUsAPIView(generics.GenericAPIView):
         serializer.save()
         return JsonResponse("done", safe = False)
 
+
+class ContactUSListAPIView(generics.GenericAPIView):
+    serializer_class = ContactSerializer
+    queryset = '' 
+    def get(self,request):
+        contacts = ContactUS.objects.all()
+        serializer = ContactSerializer(contacts , many = True)
+        return JsonResponse(serializer.data , safe=False)
 
 class ClientRefuseRoleAPIView(generics.GenericAPIView):
     permission_classes = [

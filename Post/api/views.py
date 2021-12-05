@@ -1,12 +1,13 @@
 
 from django.http.response import HttpResponse, JsonResponse
 from typing import Generic
+from django.shortcuts import redirect
 from rest_framework import generics, permissions, serializers
 from rest_framework.response import Response
-from Post.models import Post
+from Post.models import Commentaire, Post
 from accounts.api.serializers import ClientSerializer, UserSerializer
 from accounts.models import Client, Ouvrier
-from .serializers import PostSerializer,PostListeSerializer
+from .serializers import CommentaireInfoSerializer, CommentaireSerializer, PostSerializer,PostListeSerializer
 
 class AddPostAPIView(generics.RetrieveAPIView):
     permission_classes = [
@@ -34,6 +35,7 @@ class ListePostAPIView(generics.GenericAPIView):
     def get(self , request) :
         client = Client.objects.get(user = self.request.user)
         post = Post.objects.filter(client = client)
+
         serializer = PostListeSerializer(post , many = True)
         return JsonResponse(serializer.data , safe=False)
 
@@ -41,7 +43,7 @@ class ListePostForEmployeesAPIView(generics.GenericAPIView):
     permission_classes = [
         permissions.IsAuthenticated,
     ]
-    serializer_class = PostListeSerializer
+    serializer_class = CommentaireInfoSerializer
     queryset = ''
     def get(self , request) :
         client = Client.objects.get(user = self.request.user)
@@ -57,3 +59,34 @@ class ListePostForEmployeesAPIView(generics.GenericAPIView):
         serializer = PostListeSerializer(liste , many = True) 
         return JsonResponse(serializer.data , safe = False)
 
+class CommentaireAddAPIView(generics.GenericAPIView):
+    permission_classes = [
+        permissions.IsAuthenticated,
+    ]
+    serializer_class = CommentaireSerializer
+    queryset = ''
+    def post(self , request , id):
+        post = Post.objects.get(id = id)
+        print(post.content)
+        serializer = self.get_serializer(data = request.data)
+        serializer.is_valid(raise_exception=True)
+        commentaire = serializer.save()
+        client = Client.objects.get(user = self.request.user)
+        commentaire.author  = client 
+        commentaire.Post_related = post
+        commentaire.save()
+        serializer = ClientSerializer(client , many = False) 
+        return JsonResponse(serializer.data , safe = False) 
+
+class ListeCommentaireAPIView(generics.GenericAPIView):
+    permission_classes = [
+        permissions.IsAuthenticated,
+    ]
+    serializer_class = CommentaireInfoSerializer
+    queryset = ''
+    def get(self , request):
+        
+        liste_commentaire = Commentaire.objects.all() 
+        
+        serializer = CommentaireInfoSerializer(liste_commentaire , many = True)
+        return JsonResponse(serializer.data , safe = False)
