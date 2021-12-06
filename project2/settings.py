@@ -148,4 +148,4 @@ MEDIA_ROOT = os.path.join(BASE_DIR, '')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 django_heroku.settings(locals())
 
-CORS_ALLOW_ALL_ORIGINS = True
+#CORS_ALLOW_ALL_ORIGINS = True
