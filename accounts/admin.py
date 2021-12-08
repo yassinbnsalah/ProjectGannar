@@ -25,3 +25,7 @@ admin.site.register(Categorie)
 from .models import ContactUS 
 # Register your models here.
 admin.site.register(ContactUS)
+
+from .models import Report 
+# Register your models here.
+admin.site.register(Report)

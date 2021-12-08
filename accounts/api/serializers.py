@@ -5,7 +5,7 @@ from django.db.models import fields
 
 from rest_framework import serializers
 
-from accounts.models import Categorie, Client, ContactUS, Demmande, Ouvrier, Request_Role
+from accounts.models import Categorie, Client, ContactUS, Demmande, Ouvrier, Report, Request_Role
 
 User._meta.get_field('email')._unique = True
 
@@ -60,10 +60,24 @@ class ContactSerializer(serializers.ModelSerializer):
         model = ContactUS
         fields = '__all__'
 
+class ReportSerializer( serializers.ModelSerializer):
+    class Meta:
+        model = Report
+        fields = ('id' , 'message')
 class OuvrierInfoSerializer(serializers.ModelSerializer):
     class Meta : 
         model = Ouvrier
         fields = ('id' ,'job' ,'desponibility' , 'description','nb_ticket')
+
+class ReportListeSerializer( serializers.ModelSerializer):
+    fromcl= ClientInfoSerializer(many = False)
+    tocl = OuvrierSerializer(many = False)
+    
+    class Meta:
+        model = Report
+        fields = '__all__'
+
+
 
 class RequestRoleSerializer(serializers.ModelSerializer):
     class Meta :

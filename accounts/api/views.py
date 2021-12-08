@@ -1,16 +1,17 @@
 from django.contrib.auth import logout
 from django.contrib.auth.models import Group
+from django.db.models import query
 from django.http.response import HttpResponse, JsonResponse
 from rest_framework import generics, permissions, serializers
 from rest_framework.exceptions import ParseError
 from rest_framework.response import Response
 from accounts.decorators import allowed_users
-from accounts.models import Categorie, Client, ContactUS, Demmande, Ouvrier
+from accounts.models import Categorie, Client, ContactUS, Demmande, Ouvrier, Report
 from knox.models import AuthToken
 from rest_framework.parsers import JSONParser
 #from knox import AuthToken
 
-from .serializers import CategorieSerializer, ClientInfoSerializer, ClientInfoSerializer2, ClientSerializer, ContactSerializer, DemandeSendSerializer, DemandeSerializer, LoginAdminSerializer, OuvrierInfoSerializer, OuvrierSerializer, RequestRoleSerializer, UserSerializer, RegisterSerializer, LoginSerializer
+from .serializers import CategorieSerializer, ClientInfoSerializer, ClientInfoSerializer2, ClientSerializer, ContactSerializer, DemandeSendSerializer, DemandeSerializer, LoginAdminSerializer, OuvrierInfoSerializer, OuvrierSerializer,  ReportListeSerializer,  ReportSerializer, RequestRoleSerializer, UserSerializer, RegisterSerializer, LoginSerializer
 
 
 class UserAPIView(generics.GenericAPIView):
@@ -153,6 +154,20 @@ class ContactUSListAPIView(generics.GenericAPIView):
         serializer = ContactSerializer(contacts , many = True)
         return JsonResponse(serializer.data , safe=False)
 
+class ReportAddAPIView(generics.GenericAPIView):
+    serializer_class = ReportSerializer
+    queryset = ''
+    def post(self , request , id):
+        fromcl = Client.objects.get(user = self.request.user) 
+        tocl = Ouvrier.objects.get(id = id)
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        report = serializer.save()
+        report.fromcl = fromcl
+        report.tocl = tocl
+        report.save()
+        serializer = ReportListeSerializer(report , many = False)
+        return JsonResponse(serializer.data , safe = False)
 class ClientRefuseRoleAPIView(generics.GenericAPIView):
     permission_classes = [
         permissions.IsAuthenticated,
@@ -283,6 +298,16 @@ class RechercherPerCatAPIView(generics.GenericAPIView):
             liste.append(ouv)
         print(liste)
         serializer = OuvrierInfoSerializer(liste , many = True)
+        return JsonResponse(serializer.data , safe = False)
+
+
+class ListeReportAPIView(generics.GenericAPIView):
+    serializer_class = ReportListeSerializer
+    queryset  ='' 
+    def get(self , request):
+
+        reports = Report.objects.all()
+        serializer = ReportListeSerializer(reports , many = True)
         return JsonResponse(serializer.data , safe = False)
 
 class RegisterAPIView(generics.GenericAPIView):

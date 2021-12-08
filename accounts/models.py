@@ -49,3 +49,11 @@ class ContactUS (models.Model):
     def __str__(self):
         return self.nom
     
+class Report (models.Model):
+    fromcl = models.ForeignKey(Client ,null = True ,  on_delete = models.CASCADE )
+    tocl = models.ForeignKey(Ouvrier , null = True , on_delete= models.CASCADE)
+    message = models.CharField(max_length=250 , null = True)
+    date_repport = models.DateField(auto_now_add=True)
+    def __str__(self):
+        return self.fromcl.nom +" send repport for "+ self.tocl.client.nom
+    
