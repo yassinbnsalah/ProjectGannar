@@ -310,6 +310,24 @@ class ListeReportAPIView(generics.GenericAPIView):
         serializer = ReportListeSerializer(reports , many = True)
         return JsonResponse(serializer.data , safe = False)
 
+class AcceptReportAPIView(generics.GenericAPIView):
+    serializer_class = ReportListeSerializer
+    queryset  ='' 
+    def put(self , request , id):
+        report = Report.objects.get(id = id)
+        user = report.tocl.client.user 
+        user.delete() 
+        return JsonResponse("done")
+
+class RefuseReportAPIView(generics.GenericAPIView):
+    serializer_class = ReportListeSerializer
+    queryset  ='' 
+    def put(self , request , id):
+        report = Report.objects.get(id = id)
+        report.delete()
+        return JsonResponse("done")
+
+
 class RegisterAPIView(generics.GenericAPIView):
     serializer_class = RegisterSerializer
     def post(self, request, *args, **kwargs):

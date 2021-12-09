@@ -2,7 +2,7 @@
 from django.urls import path, include
 from knox import views as knox_views
 
-from .views import ClientRefuseRoleAPIView, ClientRoleAPIView, ContactUSListAPIView, ContactUsAPIView, DemandeAPIView, EmployesIDAPIView, ListeCategorie, ListeClientAPIView, ListeOuvrierAPIView, ListeReportAPIView, ListeRequestAPIView, LoginAdminAPIView, LogoutAPIView, RechercherPerCatAPIView, RechercherWithNameAPIView, RecommendedAPIView, ReportAddAPIView, UpdateClientImageAPIView, UpdateClientInfoAPIView, UpdateOuvrierInfoAPIView, UserAPIView, RegisterAPIView, LoginAPIView
+from .views import AcceptReportAPIView, ClientRefuseRoleAPIView, ClientRoleAPIView, ContactUSListAPIView, ContactUsAPIView, DemandeAPIView, EmployesIDAPIView, ListeCategorie, ListeClientAPIView, ListeOuvrierAPIView, ListeReportAPIView, ListeRequestAPIView, LoginAdminAPIView, LogoutAPIView, RechercherPerCatAPIView, RechercherWithNameAPIView, RecommendedAPIView, RefuseReportAPIView, ReportAddAPIView, UpdateClientImageAPIView, UpdateClientInfoAPIView, UpdateOuvrierInfoAPIView, UserAPIView, RegisterAPIView, LoginAPIView
 
 urlpatterns = [
     path('', include('knox.urls')),
@@ -28,6 +28,8 @@ urlpatterns = [
     path('contactUS/' , ContactUsAPIView.as_view()),
     path('contactUS/liste', ContactUSListAPIView.as_view()),
     path('report/add/<str:id>/' , ReportAddAPIView.as_view()),
-    path('report/liste/' , ListeReportAPIView.as_view())
+    path('report/liste/' , ListeReportAPIView.as_view()),
+    path('report/accepte/<str:id>/' , AcceptReportAPIView.as_view()), 
+    path('report/delete/<str:id>/' , RefuseReportAPIView.as_view())
   
 ]
