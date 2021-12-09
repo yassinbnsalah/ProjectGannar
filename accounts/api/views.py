@@ -303,6 +303,9 @@ class RechercherPerCatAPIView(generics.GenericAPIView):
 
 class ListeReportAPIView(generics.GenericAPIView):
     serializer_class = ReportListeSerializer
+    permission_classes = [
+        permissions.IsAuthenticated,
+    ]
     queryset  ='' 
     def get(self , request):
 
@@ -317,7 +320,7 @@ class AcceptReportAPIView(generics.GenericAPIView):
         report = Report.objects.get(id = id)
         user = report.tocl.client.user 
         user.delete() 
-        return JsonResponse("done")
+        return JsonResponse("done" , safe = False)
 
 class RefuseReportAPIView(generics.GenericAPIView):
     serializer_class = ReportListeSerializer
@@ -325,7 +328,7 @@ class RefuseReportAPIView(generics.GenericAPIView):
     def put(self , request , id):
         report = Report.objects.get(id = id)
         report.delete()
-        return JsonResponse("done")
+        return JsonResponse("done" , safe = False)
 
 
 class RegisterAPIView(generics.GenericAPIView):
