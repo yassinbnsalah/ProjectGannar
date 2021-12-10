@@ -44,6 +44,10 @@ class CategorieSerializer(serializers.ModelSerializer):
     class Meta : 
         model = Categorie 
         fields = '__all__'
+class CategorieAddSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Categorie 
+        fields = ('name')
         
 class DemandeSendSerializer(serializers.ModelSerializer):
     class Meta : 

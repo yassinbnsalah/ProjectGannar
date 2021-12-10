@@ -7,5 +7,5 @@ urlpatterns = [
     path('liste/' ,ListePostAPIView.as_view()),
     path('recommended/liste' , ListePostForEmployeesAPIView.as_view()),
     path('commentaire/add/<str:id>/' , CommentaireAddAPIView.as_view()),
-    path('commentaire/liste' ,ListeCommentaireAPIView.as_view() )
+    
     ]

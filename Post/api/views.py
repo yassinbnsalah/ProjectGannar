@@ -73,8 +73,10 @@ class CommentaireAddAPIView(generics.GenericAPIView):
         commentaire = serializer.save()
         client = Client.objects.get(user = self.request.user)
         commentaire.author  = client 
-        commentaire.Post_related = post
+        
         commentaire.save()
+        post.commentaires.add(commentaire)
+        post.save()
         serializer = ClientSerializer(client , many = False) 
         return JsonResponse(serializer.data , safe = False) 
 

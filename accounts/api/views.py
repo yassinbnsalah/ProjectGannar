@@ -11,7 +11,7 @@ from knox.models import AuthToken
 from rest_framework.parsers import JSONParser
 #from knox import AuthToken
 
-from .serializers import CategorieSerializer, ClientInfoSerializer, ClientInfoSerializer2, ClientSerializer, ContactSerializer, DemandeSendSerializer, DemandeSerializer, LoginAdminSerializer, OuvrierInfoSerializer, OuvrierSerializer,  ReportListeSerializer,  ReportSerializer, RequestRoleSerializer, UserSerializer, RegisterSerializer, LoginSerializer
+from .serializers import CategorieAddSerializer, CategorieSerializer, ClientInfoSerializer, ClientInfoSerializer2, ClientSerializer, ContactSerializer, DemandeSendSerializer, DemandeSerializer, LoginAdminSerializer, OuvrierInfoSerializer, OuvrierSerializer,  ReportListeSerializer,  ReportSerializer, RequestRoleSerializer, UserSerializer, RegisterSerializer, LoginSerializer
 
 
 class UserAPIView(generics.GenericAPIView):
@@ -210,7 +210,29 @@ class ListeOuvrierAPIView(generics.GenericAPIView):
         liste = Ouvrier.objects.all() 
         serializer = OuvrierSerializer(liste , many=True)
         return JsonResponse(serializer.data , safe = False)
+class AddCategorieAPIView(generics.GenericAPIView):
+    permission_classes = [
+        permissions.IsAuthenticated,
+    ]
+    serializer_class = CategorieSerializer
+    queryset = ''
+    def post(self,request):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        categorie = serializer.save()
+        categorie.nb_employees = 0 
+        categorie.save() 
+        return JsonResponse("added success", safe = False)
 
+class DeleteCategorieAPIView(generics.GenericAPIView):
+    permission_classes = [
+        permissions.IsAuthenticated,
+    ]
+    queryset = '' 
+    def delete(self , request , id):
+        categorie = Categorie.objects.get(id = id)
+        categorie.delete() 
+        return JsonResponse('done' , safe = False) 
 class ListeCategorie(generics.GenericAPIView):
     permission_classes = [
         permissions.IsAuthenticated,
