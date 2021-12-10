@@ -18,8 +18,8 @@ class SendTicketAPIView(generics.RetrieveAPIView):
     queryset = '' 
     def post(self, request, pk):
         to_employees = Ouvrier.objects.get( id = pk)
-        to_employees.nb_ticket = to_employees.nb_ticket + 1 
-        to_employees.save()
+        #to_employees.nb_ticket = to_employees.nb_ticket + 1 
+        #to_employees.save()
         client = Client.objects.get(user = self.request.user)
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
