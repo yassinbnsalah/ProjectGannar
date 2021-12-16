@@ -92,3 +92,13 @@ class ListeCommentaireAPIView(generics.GenericAPIView):
         
         serializer = CommentaireInfoSerializer(liste_commentaire , many = True)
         return JsonResponse(serializer.data , safe = False)
+
+class DeletePostAPIView(generics.GenericAPIView):
+    permission_classes = [
+        permissions.IsAuthenticated,
+    ]
+    queryset = ''
+    def delete(self , request ,id):
+        post = Post.objects.get(id = id)
+        post.delete()
+        return JsonResponse("done",  safe = False)

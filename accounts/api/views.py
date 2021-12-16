@@ -322,7 +322,16 @@ class RechercherPerCatAPIView(generics.GenericAPIView):
         serializer = OuvrierInfoSerializer(liste , many = True)
         return JsonResponse(serializer.data , safe = False)
 
-
+class ListeContactUSAPIView(generics.GenericAPIView):
+    permission_classes = [
+        permissions.IsAuthenticated,
+    ]
+    serializer_class = ContactSerializer
+    queryset = ''
+    def get(self, request):
+        contacts = ContactUS.objects.all()
+        serializer = ContactSerializer(contacts , many= True)
+        return JsonResponse(serializer.data , safe= False)
 class ListeReportAPIView(generics.GenericAPIView):
     serializer_class = ReportListeSerializer
     permission_classes = [
