@@ -1,5 +1,5 @@
 from django.contrib.auth import logout
-from django.contrib.auth.models import Group
+from django.contrib.auth.models import Group, User
 from django.db.models import query
 from django.http.response import HttpResponse, JsonResponse
 from rest_framework import generics, permissions, serializers
@@ -251,7 +251,9 @@ class EmployesIDAPIView(generics.GenericAPIView):
     serializer_class = OuvrierSerializer 
     queryset = ''
     def get(self , request , pk):
-        employes = Ouvrier.objects.get(id = pk)
+        user = User.objects.get(id = pk)
+        client = Client.objects.get(user = user)
+        employes = Ouvrier.objects.get(client = client)
         serializer = OuvrierSerializer(employes , many = False)
         return JsonResponse(serializer.data , safe = False)
 class ListeRequestAPIView(generics.GenericAPIView):
