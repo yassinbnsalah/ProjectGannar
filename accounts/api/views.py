@@ -248,13 +248,21 @@ class EmployesIDAPIView(generics.GenericAPIView):
     permission_classes = [
         permissions.IsAuthenticated,
     ]
-    serializer_class = OuvrierSerializer 
+    #serializer_class = OuvrierSerializer 
     queryset = ''
     def get(self , request , pk):
+        print(pk)
         user = User.objects.get(id = pk)
+        print(user.username)
         client = Client.objects.get(user = user)
-        employes = Ouvrier.objects.get(client = client)
-        serializer = OuvrierSerializer(employes , many = False)
+        print(client.nom)
+        if client.is_employees == True:
+            employes = Ouvrier.objects.get(client = client)
+            print(employes.job)
+            serializer = OuvrierSerializer(employes , many = False)
+        else:
+            serializer = ClientSerializer(client , many= False)
+        
         return JsonResponse(serializer.data , safe = False)
 class ListeRequestAPIView(generics.GenericAPIView):
     permission_classes = [
